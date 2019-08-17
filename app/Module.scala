@@ -14,7 +14,7 @@ import com.google.inject.AbstractModule
 class Module extends AbstractModule {
 
   override def configure() = {
-    bind(classOf[com.bms.property.RevenuesEntryRepository]).to(classOf[com.bms.property.RevenuesEntryRepositoryImpl])
+//    bind(classOf[com.bms.property.RevenuesEntryRepository]).to(classOf[com.bms.property.RevenuesEntryRepositoryImpl])
   }
 
 }
