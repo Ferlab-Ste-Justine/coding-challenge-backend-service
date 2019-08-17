@@ -1,24 +1,35 @@
 package controllers
 
-import javax.inject._
+import javax.inject.Inject
 
-import models.User
-import play.api.data.Form
-import play.api.mvc._
-import play.api.data.Forms.{mapping, nonEmptyText}
+import models.{Global, User}
+
+import play.api.mvc.{Action, _}
 import play.api.libs.json.{JsValue, Json}
+import repositories.UserRepository
 
 import scala.concurrent.Future
 
-@Singleton
-class UserController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+
+class UserController @Inject()(
+  userRepository: UserRepository
+)(cc: ControllerComponents) extends AbstractController(cc) {
 
   def validateUser: Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
     println("ADRIAN")
-    Future.successful(Ok)
+    println(request.session.get(Global.SESSION_USER))
+    Future.successful(Ok.withSession(Global.SESSION_USER -> "ADRIAN222"))
 
   }
 
+  def addUser(): Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
+    val entries = request.body.asOpt[User]
 
-
+    entries match {
+      case Some(u) => userRepository.addUser(u)
+        val json = Json.toJson(entries)
+        Future.successful(Created(json))
+      case None => Future.successful(BadRequest)
+    }
+  }
 }

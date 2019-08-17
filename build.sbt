@@ -11,6 +11,8 @@ libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test
 libraryDependencies ++= Seq(evolutions, jdbc)
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.36"
+libraryDependencies += "org.playframework.anorm" %% "anorm" % "2.6.4"
+
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.wallApp.controllers._"
