@@ -9,7 +9,7 @@ case class User (
                   id: Int = 0,
                   username: String,
                   password: String,
-                  userType: String
+                  member: Boolean
                 )
 
 object User {
@@ -17,14 +17,14 @@ object User {
     (JsPath \ "id").read[Int] or Reads.pure(0) and
       (JsPath \ "username").read[String] and
       (JsPath \ "password").read[String] and
-      (JsPath \ "userType").read[String]
+      (JsPath \ "member").read[Boolean]
     )(User.apply _)
 
   implicit val writesUser: Writes[User] = (
     (JsPath \ "id").write[Int] and
       (JsPath \ "username").write[String] and
       (JsPath \ "password").write[String] and
-      (JsPath \ "userType").write[String]
+      (JsPath \ "member").write[Boolean]
     )(unlift(User.unapply))
 }
 

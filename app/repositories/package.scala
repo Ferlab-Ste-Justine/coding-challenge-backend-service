@@ -5,10 +5,10 @@ package object repositories {
     val ID = "id"
     val USRNAME = "username"
     val PWD = "password"
-    val USERTYPE = "usertype"
+    val MEMBER = "member"
 
     val USER_TABLE = "wall.user"
 
-    val ALL_FIELDS:String =  s"$USRNAME, $PWD, $USERTYPE"
+    val ALL_FIELDS:String =  s"$USRNAME, $PWD, $MEMBER"
   }
 }
