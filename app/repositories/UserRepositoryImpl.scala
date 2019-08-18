@@ -13,10 +13,10 @@ class UserRepositoryImpl @Inject() (
   override def addUser(user: User): Future[Unit] = Future(blocking {
     db.withConnection{implicit c => {
       val sqlProperty =
-        s"""INSERT INTO ${UserRepoConst.USER_TABLE} (${UserRepoConst.ALL_FIELDS}) VALUES ({username},{password})"""
+        s"""INSERT INTO ${UserRepoConst.USER_TABLE} (${UserRepoConst.ALL_FIELDS}) VALUES ({username},{password},{usertype})"""
 
       SQL(sqlProperty)
-        .on('username -> user.username, 'password -> user.password)
+        .on('username -> user.username, 'password -> user.password, 'usertype -> user.userType)
         .executeInsert()
 
     }}
@@ -30,7 +30,6 @@ class UserRepositoryImpl @Inject() (
        .as(UserRepositoryImpl.userParser.*).headOption
     }
   }
-
 }
 
 
@@ -42,10 +41,12 @@ object UserRepositoryImpl {
       id <- int(UserRepoConst.ID)
       username <- str(UserRepoConst.USRNAME)
       password <- str(UserRepoConst.PWD)
+      userType <- str(UserRepoConst.USERTYPE)
     } yield {User(
       id = id,
       username = username,
-      password = password
+      password = password,
+      userType = userType
     )}
   }
 

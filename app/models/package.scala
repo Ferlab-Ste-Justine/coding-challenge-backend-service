@@ -4,7 +4,7 @@ package object models {
   object Global {
 
     val SESSION_USER = "username"
-
+    val USER_TYPE = "type"
   }
 
 }
