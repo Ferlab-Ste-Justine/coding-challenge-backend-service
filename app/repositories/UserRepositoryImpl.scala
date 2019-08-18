@@ -13,10 +13,10 @@ class UserRepositoryImpl @Inject() (
   override def addUser(user: User): Future[Unit] = Future(blocking {
     db.withConnection{implicit c => {
       val sqlProperty =
-        s"""INSERT INTO ${UserRepoConst.USER_TABLE} (${UserRepoConst.ALL_FIELDS}) VALUES ({username},{password},{member})"""
+        s"""INSERT INTO ${UserRepoConst.USER_TABLE} (${UserRepoConst.ALL_FIELDS_USER}) VALUES ({username},{password})"""
 
       SQL(sqlProperty)
-        .on('username -> user.username, 'password -> user.password, 'member -> user.member)
+        .on('username -> user.username, 'password -> user.password)
         .executeInsert()
 
     }}
@@ -34,19 +34,17 @@ class UserRepositoryImpl @Inject() (
 
 
 object UserRepositoryImpl {
-  import anorm.SqlParser.{ str, int, bool }
+  import anorm.SqlParser.{ str, int }
 
   def userParser:RowParser[User] = {
     for {
       id <- int(UserRepoConst.ID)
       username <- str(UserRepoConst.USRNAME)
       password <- str(UserRepoConst.PWD)
-      member <- bool(UserRepoConst.MEMBER)
     } yield {User(
       id = id,
       username = username,
-      password = password,
-      member = member
+      password = password
     )}
   }
 

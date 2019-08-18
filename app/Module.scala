@@ -15,6 +15,7 @@ class Module extends AbstractModule {
 
   override def configure() = {
     bind(classOf[repositories.UserRepository]).to(classOf[repositories.UserRepositoryImpl])
+    bind(classOf[repositories.UserInputsRepository]).to(classOf[repositories.UserInputsRepositoryImpl])
   }
 
 }
