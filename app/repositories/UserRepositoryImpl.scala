@@ -21,4 +21,32 @@ class UserRepositoryImpl @Inject() (
 
     }}
   })
+
+  override def getUser(username: String): Option[User] = db.withConnection{implicit c => {
+      val sqlUser = s"""SELECT * FROM ${UserRepoConst.USER_TABLE} WHERE ${UserRepoConst.USRNAME} = {username}"""
+
+      SQL(sqlUser)
+       .on('username -> username)
+       .as(UserRepositoryImpl.userParser.*).headOption
+    }
+  }
+
+}
+
+
+object UserRepositoryImpl {
+  import anorm.SqlParser.{ str, int }
+
+  def userParser:RowParser[User] = {
+    for {
+      id <- int(UserRepoConst.ID)
+      username <- str(UserRepoConst.USRNAME)
+      password <- str(UserRepoConst.PWD)
+    } yield {User(
+      id = id,
+      username = username,
+      password = password
+    )}
+  }
+
 }
