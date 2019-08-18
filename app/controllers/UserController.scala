@@ -5,6 +5,8 @@ import javax.inject.Inject
 import models.{Global, User, WallInput}
 import play.api.mvc.{Action, _}
 import play.api.libs.json.{JsValue, Json}
+import play.api.data._
+import play.api.data.Forms._
 import repositories.{UserInputsRepository, UserRepository}
 
 import scala.concurrent.Future
@@ -16,11 +18,26 @@ class UserController @Inject()(
   authenticatedUserAction: AuthenticatedUserAction
 )(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def validateUser: Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
-    println("ADRIAN")
-    println(request.session.get(Global.SESSION_USER))
-    Future.successful(Ok.withSession(Global.SESSION_USER -> "ADRIAN222"))
-    //TODO
+  val userForm = Form(
+    mapping(
+      "id" -> ignored(0),
+      "username" -> text,
+      "password"  -> text
+    )(User.apply)(User.unapply)
+  )
+
+  def validateUser: Action[AnyContent] = Action { implicit request =>
+
+    val formValidationResult: Form[User] = userForm.bindFromRequest
+
+    formValidationResult.data.get("username").flatMap(u => userRepository.getUser(u)) match {
+      case Some(user) => if(formValidationResult.data.get("password").contains(user.password)) {
+        Ok.withSession(Global.SESSION_USER -> user.username)
+      } else {
+        BadRequest("Wrong password")
+      }
+      case None => Unauthorized("You are not a valid user")
+    }
   }
 
   def addUser(): Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
@@ -48,10 +65,14 @@ class UserController @Inject()(
           userInputsRepository.addUserInput(username)(w)
           val json = Json.toJson(entries)
           Future.successful(Created(json))
-        case None =>
+        case None => Future.successful(BadRequest("You should not be here"))
       }
       case None => Future.successful(BadRequest("Invalid request"))
     }
+  }
+
+  def logout = Action {
+    Ok("Logout Successful").withNewSession
   }
 
 }

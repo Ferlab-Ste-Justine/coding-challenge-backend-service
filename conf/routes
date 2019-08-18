@@ -11,6 +11,10 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 #User
 + nocsrf
-POST /userlogin             controllers.UserController.validateUser
+POST /user/login             controllers.UserController.validateUser
 + nocsrf
-POST /addUser             controllers.UserController.addUser
+POST /user/add             controllers.UserController.addUser
++ nocsrf
+POST /user/validate             controllers.UserController.validateUser
++ nocsrf
+GET /user/logout          controllers.UserController.logout
