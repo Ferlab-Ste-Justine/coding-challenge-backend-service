@@ -9,6 +9,8 @@ POST /user/login             controllers.UserController.validateUser
 + nocsrf
 POST /user/add             controllers.UserController.addUser
 + nocsrf
+POST /user/addInput             controllers.UserController.addUserMessage
++ nocsrf
 POST /user/validate             controllers.UserController.validateUser
 + nocsrf
 GET /user/logout          controllers.UserController.logout

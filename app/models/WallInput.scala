@@ -16,7 +16,7 @@ object WallInput {
     (JsPath \ "id").read[Int] or Reads.pure(0) and
       (JsPath \ "userName").read[String] and
       (JsPath \ "message").read[String] and
-      (JsPath \ "type").read[String]
+      (JsPath \ "type").read[String].map(m => if(m.toUpperCase.trim == "SAY"){"SAY"} else {"THOUGHT"})
     )(WallInput.apply _)
 
   implicit val writesWallInput: Writes[WallInput] = (
