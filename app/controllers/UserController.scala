@@ -16,7 +16,7 @@ class UserController @Inject()(
   userRepository: UserRepository,
   userInputsRepository: UserInputsRepository,
   authenticatedUserAction: AuthenticatedUserAction
-)(cc: ControllerComponents) extends AbstractController(cc) {
+                              )(cc: ControllerComponents) extends AbstractController(cc) {
 
   val userForm = Form(
     mapping(
@@ -56,7 +56,7 @@ class UserController @Inject()(
     }
   }
 
-  def addUserMessage(): Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
+  def addUserMessage(): Action[JsValue] = authenticatedUserAction(parse.tolerantJson) { implicit request =>
     val entries = request.body.asOpt[WallInput]
 
     entries match {
@@ -64,15 +64,14 @@ class UserController @Inject()(
         case Some(username) =>
           userInputsRepository.addUserInput(username)(w)
           val json = Json.toJson(entries)
-          Future.successful(Created(json))
-        case None => Future.successful(BadRequest("You should not be here"))
+          Created(json)
+        case None => BadRequest("You should not be here")
       }
-      case None => Future.successful(BadRequest("Invalid request"))
+      case None => BadRequest("Invalid request")
     }
   }
 
-  def logout = Action {
-    Ok("Logout Successful").withNewSession
+  def logout() = authenticatedUserAction { implicit request: Request[AnyContent] =>
+    Ok("Logout successful").withNewSession
   }
-
 }
