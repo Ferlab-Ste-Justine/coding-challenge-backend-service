@@ -85,6 +85,13 @@ postUrl: Call)(implicit request: MessagesRequestHeader)
                 type: type
             };
 
+            var token =  $('input[name="csrfToken"]').attr('value')
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Csrf-Token', token);
+                }
+            });
+
             $.ajax({
                 url: "@routes.UserController.addUserMessage()",
                 data: JSON.stringify(obj),

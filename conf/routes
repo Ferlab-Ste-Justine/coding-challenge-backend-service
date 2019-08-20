@@ -7,13 +7,7 @@ GET  /                          controllers.HomeController.index
 GET  /assets/*file              controllers.Assets.versioned(path="/public", file: Asset)
 
 #User
-+ nocsrf
 POST /user/login             controllers.UserController.validateUser
-
 POST /user/add             controllers.UserController.addUser
-+ nocsrf
 POST /user/addInput             controllers.UserController.addUserMessage
-+ nocsrf
-POST /user/validate             controllers.UserController.validateUser
-+ nocsrf
 GET /user/logout          controllers.UserController.logout
