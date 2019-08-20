@@ -1,0 +1,12 @@
+logs
+target
+/.idea
+/.idea_modules
+/.classpath
+/.project
+/.settings
+/.gradle
+gradle
+gradlew
+gradlew.bat
+/RUNNING_PID

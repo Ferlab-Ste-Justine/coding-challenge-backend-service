@@ -1,0 +1,113 @@
+@( form: Form[models.User],
+postUrl: Call)(implicit request: MessagesRequestHeader)
+
+@main("Welcome to Play") {
+    <h1>User Login</h1>
+
+    @helper.form(postUrl, 'id -> "myForm") {
+
+        @helper.CSRF.formField
+
+        @helper.inputText(form("username"), 'placeholder -> "username", 'id -> "username", 'size -> 30)
+
+        @helper.inputPassword(form("password"), 'placeholder -> "password", 'id -> "password", 'size -> 30)
+
+        <button>Login</button>
+    }
+
+    <a href="@routes.UserController.logout()"><button>Logout</button></a>
+
+    <br style="line-height:5;">
+    <br style="line-height:5;">
+
+    <form>
+        <fieldset>
+            <legend>Add User - No authentication required </legend>
+            <input type="text" placeholder="Username" id="string-field-usrname">
+            <input type="text" placeholder="Password" id="string-field-pawd">
+            <button id="submitUser" type="submit" >Add User</button>
+        </fieldset>
+    </form>
+
+    <br style="line-height:5;">
+
+    <form>
+        <fieldset>
+            <legend>Add User Input - Authentication required </legend>
+            <input type="text" placeholder="Message" id="string-field-message">
+            <input type="text" placeholder="Type" id="string-field-messagetype" value="SAY">
+            <button id="submitUserInput" type="submit" >Add User Message</button>
+        </fieldset>
+    </form>
+
+
+    <script type = "text/javascript" >
+        $('#submitUser').click(function(){
+            var username = $('#string-field-usrname').val();
+            var password = $('#string-field-pawd').val();
+
+            var obj = {
+                username: username,
+                password: password
+            };
+
+            var token =  $('input[name="csrfToken"]').attr('value')
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Csrf-Token', token);
+                }
+            });
+
+            $.ajax({
+                url: "@routes.UserController.addUser()",
+                data: JSON.stringify(obj),
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                type: 'POST',
+                success: function(res) {
+                  if (res) {
+                    console.log("Success!");
+                  } else {
+                    console.log("Failed...");
+                  }
+                }
+            });
+
+        });
+
+        $('#submitUserInput').click(function(){
+            var message = $('#string-field-message').val();
+            var type = $('#string-field-messagetype').val();
+
+            var obj = {
+                message: message,
+                type: type
+            };
+
+            var token =  $('input[name="csrfToken"]').attr('value')
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Csrf-Token', token);
+                }
+            });
+
+            $.ajax({
+                url: "@routes.UserController.addUserMessage()",
+                data: JSON.stringify(obj),
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                type: 'POST',
+                success: function(res) {
+                  if (res) {
+                    console.log("Success!");
+                  } else {
+                    console.log("Failed...");
+                  }
+                }
+            });
+
+        });
+    </script>
+}
