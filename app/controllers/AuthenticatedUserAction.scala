@@ -5,10 +5,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import play.api.mvc.Results._
 import play.api.mvc._
 
-/**
-  * https://www.playframework.com/documentation/2.7.x/ScalaActionsComposition#Authentication
-  */
-
 class AuthenticatedUserAction @Inject()(parser: BodyParsers.Default)(implicit ec: ExecutionContext)
   extends ActionBuilderImpl(parser) {
 

@@ -15,23 +15,20 @@ class UserInputsRepositoryImpl @Inject() (
   override def addUserInput(username: String)(wallInput: WallInput): Future[Unit] = Future(blocking {
     db.withConnection{implicit c => {
       val sqlProperty =
-        s"""INSERT INTO ${UserRepoConst.USER_INPUTS_TABLE} (${UserRepoConst.ALL_FIELDS_USERINPUTS})
-           |VALUES ({username},{message},{type)"""
-
+        s"""INSERT INTO ${UserRepoConst.USER_INPUTS_TABLE} (${UserRepoConst.ALL_FIELDS_USERINPUTS}) VALUES ({username},{message},{typemessage})"""
       SQL(sqlProperty)
-        .on('username -> username, 'message -> wallInput._message, 'type -> wallInput._type)
+        .on('username -> username, 'message -> wallInput._message, 'typemessage -> wallInput._type)
         .executeInsert()
-
     }}
   })
 
-    override def getUserInputs(username: String): List[WallInput] = db.withConnection{implicit c => {
+    override def getUserInputs(username: String): Future[List[WallInput]] = Future(db.withConnection{implicit c => {
       val sqlUser = s"""SELECT * FROM ${UserRepoConst.USER_TABLE} WHERE ${UserRepoConst.USRNAME} = {username}"""
 
       SQL(sqlUser)
         .on('username -> username)
         .as(UserInputsRepositoryImpl.userInputParser.*)
-    }}
+    }})
 }
 
 object UserInputsRepositoryImpl {
@@ -40,12 +37,10 @@ object UserInputsRepositoryImpl {
   def userInputParser:RowParser[WallInput] = {
     for {
     id <- int(UserRepoConst.ID)
-    userName <- str(UserRepoConst.USRNAME)
     _message <- str(UserRepoConst.MESSAGE)
-    _type <- str(UserRepoConst.TYPE)
+    _type <- str(UserRepoConst.TYPEMESSAGE)
   } yield {WallInput(
     id = id,
-      userName = userName,
     _message = _message,
       _type = _type
     )}

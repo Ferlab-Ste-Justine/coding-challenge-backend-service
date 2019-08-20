@@ -36,7 +36,8 @@ class UserController @Inject()(
       } else {
         BadRequest("Wrong password")
       }
-      case None => Unauthorized("You are not a valid user")
+      case None =>
+        Unauthorized("You are not a valid user")
     }
   }
 
@@ -56,11 +57,12 @@ class UserController @Inject()(
     }
   }
 
-  def addUserMessage(): Action[JsValue] = authenticatedUserAction(parse.tolerantJson) { implicit request =>
+  def addUserMessage() = authenticatedUserAction(parse.tolerantJson) { implicit request =>
     val entries = request.body.asOpt[WallInput]
 
     entries match {
-      case Some(w) => request.session.get(models.Global.SESSION_USER) match {
+      case Some(w) =>
+        request.session.get("username") match {
         case Some(username) =>
           userInputsRepository.addUserInput(username)(w)
           val json = Json.toJson(entries)
@@ -70,8 +72,8 @@ class UserController @Inject()(
       case None => BadRequest("Invalid request")
     }
   }
-
   def logout() = authenticatedUserAction { implicit request: Request[AnyContent] =>
     Ok("Logout successful").withNewSession
   }
+
 }
