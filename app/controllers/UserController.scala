@@ -26,6 +26,9 @@ class UserController @Inject()(
     )(User.apply)(User.unapply)
   )
 
+  /** Validate that the request user is a registered member
+    * receive a Form data and binds it to userForm
+    */
   def validateUser: Action[AnyContent] = Action { implicit request =>
 
     val formValidationResult: Form[User] = userForm.bindFromRequest
@@ -41,6 +44,9 @@ class UserController @Inject()(
     }
   }
 
+  /** Add a new user
+    * deserialize JSON into User and attempt to add it
+    */
   def addUser(): Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
     val entries = request.body.asOpt[User]
 
@@ -57,7 +63,10 @@ class UserController @Inject()(
     }
   }
 
-  def addUserMessage() = authenticatedUserAction(parse.tolerantJson) { implicit request =>
+  /** Add a new message from an authenticated User
+    * deserialize JSON into WallInput and attempts to add it
+    */
+  def addUserMessage(): Action[JsValue] = authenticatedUserAction(parse.tolerantJson) { implicit request =>
     val entries = request.body.asOpt[WallInput]
 
     entries match {
@@ -72,6 +81,9 @@ class UserController @Inject()(
       case None => BadRequest("Invalid request")
     }
   }
+
+  /** Logout an authenticated User
+    */
   def logout() = authenticatedUserAction { implicit request: Request[AnyContent] =>
     Ok("Logout successful").withNewSession
   }

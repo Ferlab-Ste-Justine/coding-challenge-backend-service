@@ -5,6 +5,14 @@ import scala.concurrent.{ExecutionContext, Future}
 import play.api.mvc.Results._
 import play.api.mvc._
 
+
+/** Custom Action - Authenticates if User is authorized or not
+  * to perform a particular request, wrapped by this Action.
+  * This custom action can be injected and a controller and an instance of
+  * it can be used.
+  * See documentation:
+  * https://www.playframework.com/documentation/2.7.x/ScalaActionsComposition#Authentication
+  */
 class AuthenticatedUserAction @Inject()(parser: BodyParsers.Default)(implicit ec: ExecutionContext)
   extends ActionBuilderImpl(parser) {
 
